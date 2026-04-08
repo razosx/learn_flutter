@@ -10,18 +10,21 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  flutter_riverpod: 
+  flutter_riverpod:
   dio:
-  retrofit: 
-  riverpod_annotation: 
+  retrofit:
+  riverpod_annotation:
+  flutter_bloc: ^9.1.0
+  equatable: ^2.0.7
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
   # retrofit_generator: 
-  build_runner: 
-  riverpod_generator: 
+  build_runner:
+  riverpod_generator:
+  bloc_test: ^10.0.0
 
 # The following section is specific to Flutter packages.
 flutter:

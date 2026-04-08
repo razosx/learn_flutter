@@ -4,50 +4,56 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'liked_users_provider.g.dart';
 
+/// Notifier que mantiene el conjunto global de usuarios con like.
+/// Usa [Set] para evitar duplicados por referencia de objeto.
 @riverpod
 class LikedUsersNotifier extends _$LikedUsersNotifier {
 
-  // Initialize with an empty set of liked users
   @override
   Set<RandomUser> build() => {};
 
+  /// Agrega [user] al set si aún no está presente.
   void addLikedUser(RandomUser user) {
-    // Add a user to the liked users set
     if (!state.contains(user)) state = {...state, user};
   }
 
+  /// Elimina [user] del set comparando por [username].
   void removeLikedUser(RandomUser user) {
-    // Remove a user from the liked users set
     state = state.where((u) => u.login.username != user.login.username).toSet();
   }
 }
 
-/// Animate the +1 when liking a user
+/// Notifier que controla la animación "+1" al dar like.
+/// Se activa con [animate] y se autoreset tras 500ms.
 @riverpod
 class AnimateP1 extends _$AnimateP1 {
   @override
   bool build() => false;
 
+  /// Activa la animación y la apaga automáticamente después de 500ms.
   void animate() {
-    state = true; // Trigger animation
+    state = true;
     Future.delayed(const Duration(milliseconds: 500), () {
       if (ref.mounted) {
-        state = false; // Reset after animation duration
+        state = false;
       }
     });
   }
 }
-/// Animate the - when disliking a user
+
+/// Notifier que controla la animación "−" al dar dislike.
+/// Mismo patrón que [AnimateP1].
 @riverpod
 class AnimateMinus extends _$AnimateMinus {
   @override
   bool build() => false;
 
+  /// Activa la animación y la apaga automáticamente después de 500ms.
   void animate() {
-    state = true; // Trigger animation
+    state = true;
     Future.delayed(const Duration(milliseconds: 500), () {
       if (ref.mounted) {
-        state = false; // Reset after animation duration
+        state = false;
       }
     });
   }

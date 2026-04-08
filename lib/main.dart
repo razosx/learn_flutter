@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:store/bloc/blocs/liked_users/liked_users_bloc.dart';
+import 'package:store/bloc/blocs/user/user_bloc.dart';
+import 'package:store/bloc/blocs/user/user_event.dart';
+import 'package:store/bloc/repositories/user_repository.dart';
+import 'package:store/bloc/screens/friends_list_screen.dart';
 import 'package:store/riverpod/screens/friends_list_screen.dart';
 
 void main() {
@@ -102,31 +108,22 @@ class _RiverpodStorePageState extends State<RiverpodStorePage> {
   }
 }
 
-class BlocStorePage extends StatefulWidget {
+class BlocStorePage extends StatelessWidget {
   const BlocStorePage({super.key});
 
   @override
-  State<BlocStorePage> createState() => _BlocStorePageState();
-}
-
-class _BlocStorePageState extends State<BlocStorePage> {
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bloc Store'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            }, 
-            icon: const Icon(Icons.shopping_cart)
-          )
-        ],
-      ),
-      body: const Center(
-        child: Text('Riverpod Store Page'),
-      ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<UserBloc>(
+          create: (_) => UserBloc(repository: const RandomUserRepository())
+            ..add(const FetchUsersEvent()),
+        ),
+        BlocProvider<LikedUsersBloc>(
+          create: (_) => LikedUsersBloc(),
+        ),
+      ],
+      child: const FriendsListBlocScreen(),
     );
   }
 }

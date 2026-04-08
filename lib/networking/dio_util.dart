@@ -10,6 +10,8 @@ final dio = Dio(
   ),
 );
 
+/// Llama a la API de RandomUser y retorna una lista de [results] usuarios.
+/// Lanza [Exception] si la petición HTTP falla o el servidor responde con error.
 Future<List<RandomUser>> fetchRandomUsers(int results) async {
   try {
     final response = await dio.get('?results=$results');
