@@ -6,10 +6,36 @@ import 'package:store/bloc/blocs/user/user_bloc.dart';
 import 'package:store/bloc/blocs/user/user_event.dart';
 import 'package:store/bloc/repositories/user_repository.dart';
 import 'package:store/bloc/screens/friends_list_screen.dart';
+import 'package:store/cubit/cubits/liked_users/liked_users_cubit.dart';
+import 'package:store/cubit/cubits/user/user_cubit.dart';
+import 'package:store/cubit/screens/friends_list_screen.dart';
 import 'package:store/riverpod/screens/friends_list_screen.dart';
 
 void main() {
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(
+    ProviderScope(
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<UserCubit>(
+          // Cubit: llama fetchUsers() directamente, sin eventos
+          create: (_) => UserCubit(repository: const RandomUserRepository())
+            ..fetchUsers(),
+          ),
+          BlocProvider<LikedUsersCubit>(
+            create: (_) => LikedUsersCubit(),
+          ),
+          BlocProvider<UserBloc>(
+            create: (_) => UserBloc(repository: const RandomUserRepository())
+              ..add(const FetchUsersEvent()),
+          ),
+          BlocProvider<LikedUsersBloc>(
+            create: (_) => LikedUsersBloc(),
+          ),
+        ],
+        child: const MyApp()
+      )
+    )
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -64,13 +90,24 @@ class _MyHomePageState extends State<MyHomePage> {
             ElevatedButton(
               onPressed: (){
                 Navigator.push(
-                  context, 
+                  context,
                   MaterialPageRoute(
                     builder: (context) => const BlocStorePage()
                   )
                 );
-              }, 
+              },
               child: const Text('Bloc')
+            ),
+            ElevatedButton(
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CubitStorePage()
+                  )
+                );
+              },
+              child: const Text('Cubit')
             ),
           ],
         ),
@@ -108,22 +145,23 @@ class _RiverpodStorePageState extends State<RiverpodStorePage> {
   }
 }
 
+/// Punto de entrada de la implementación Cubit.
+/// Provee [UserCubit] y [LikedUsersCubit] con [MultiBlocProvider] y dispara
+/// [fetchUsers()] al crear el cubit (equivalente al ..add(FetchUsersEvent()) del BLoC).
+class CubitStorePage extends StatelessWidget {
+  const CubitStorePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const FriendsListCubitScreen();
+  }
+}
+
 class BlocStorePage extends StatelessWidget {
   const BlocStorePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<UserBloc>(
-          create: (_) => UserBloc(repository: const RandomUserRepository())
-            ..add(const FetchUsersEvent()),
-        ),
-        BlocProvider<LikedUsersBloc>(
-          create: (_) => LikedUsersBloc(),
-        ),
-      ],
-      child: const FriendsListBlocScreen(),
-    );
+    return const FriendsListBlocScreen();
   }
 }
