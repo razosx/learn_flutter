@@ -47,7 +47,7 @@ graph TD
     LUW -->|BlocConsumer| LUB
 
     UB --> UR
-    UR <|.. RUR
+    UR <-- RUR
     RUR --> DIO
     DIO --> API
 

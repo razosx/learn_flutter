@@ -10,6 +10,7 @@ part 'user_provider.g.dart';
 /// que la UI consume con pattern matching.
 @riverpod
 Future<List<RandomUser>> randomUserList(ref) async {
+  print('Fetching random users...');
   return await fetchRandomUsers(10);
 }
 
